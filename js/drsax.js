@@ -18,7 +18,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-const DrSax_revision = "worked_2020_05_19_r2";
+const DrSax_revision = "worked_2020_05_19_r3";
 
 ;(function(window, Constructor, undefined) {
 
@@ -87,7 +87,8 @@ const DrSax_revision = "worked_2020_05_19_r2";
         nodeConnect: function(sax) {
         
             var gain = sax.createGain(),
-                proto = Object.getPrototypeOf(Object.getPrototypeOf(gain)),
+                checkGetPrototype = Object.getPrototypeOf(gain),
+                proto = Object.getPrototypeOf(checkGetPrototype),
                 connectNode = proto.connect;
        
             if (!!sax.__connectified__){
@@ -99,8 +100,15 @@ const DrSax_revision = "worked_2020_05_19_r2";
             }
     
             function nodeArgumentConnect() {
+
                 var node = arguments[0];
-                arguments[0] = ConstructorInit.isPrototypeOf? (ConstructorInit.isPrototypeOf(node)? node.input : node) : (node.input || node);
+
+                if (!!ConstructorInit.isPrototypeOf){
+                    arguments[0] = ConstructorInit.isPrototypeOf(node)? node.input : node;
+                } else {
+                    arguments[0] = node.input || node;
+                }
+        
                 connectNode.apply(this, arguments);
                 return node;
             }
