@@ -18,71 +18,167 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-const DrSax_revision = "worked_2020_05_18_r1";
+const DrSax_revision = "worked_2020_05_19_r1";
 
-;(function(window, undefined) {
+;(function(window, Constructor, undefined) {
 
+
+    /**
+     * DrSax.js Initialize
+     * @desc : Define Defaluts
+     *
+     */
+
+	var DrSaxInitSet = function(){
+        that = this;
+    };
+
+    DrSaxInitSet.prototype = {
+
+        /** 
+		 * Engine Init
+		 * @desc : Basic data check
+		 *
+		 */
+
+        init : function() {
+            that.windowCheck()
+        },
+        /*
+		 * @ audioContextCheck
+		 *
+		 */
+        audioContextCheck: function() {
+            that.primary.defalutCheck(!typeof window.drsax === "object" && !Number(drsax.sampleRate) === 48000 , "drsax");
+        }, 
+        /*
+		 * @ destinationCheck
+		 *
+		 */
+        destinationCheck: function() {
+            that.primary.defalutCheck(!typeof DAC === "object" && !Number(DAC.context.sampleRate) === 48000, "DAC");
+    
+        },
+        /*
+		 * @ windowCheck
+		 *
+		 */
+        windowCheck: function() {
+            that.primary.defalutCheck(!typeof window === "object", "window");
+        },
+        primary :{
+            defalutCheck :function(condition, obj){
+
+                try {
+                    if(condition) {
+                        throw new Error('no');
+                    }    
+                } catch {
+                    throw new Error('DrSax.js '+ obj +' Initialize problems');
+
+                } finally {
+                    console.log("=> DrSax.js?" +DrSax_revision);
+                }
+            }
+        },
+        userDefaultData: function(userData, defaultData) {
+            return userData === undefined ? defaultData : userData;
+        },
+        nodeConnect: function(sax) {
+            if (sax.__connectified__ === true) return;
+
+            var gain = sax.createGain(),
+                proto = Object.getPrototypeOf(Object.getPrototypeOf(gain)),
+                connectNode = proto.connect;
+
+            proto.connect = nodeArgumentConnect;
+            sax.__connectified__ = true; 
+
+            function nodeArgumentConnect() {
+                var node = arguments[0];
+                arguments[0] = ConstructorInit.isPrototypeOf? (ConstructorInit.isPrototypeOf(node)? node.input : node) : (node.input || node);
+                connectNode.apply(this, arguments);
+                return node;
+            }
+        },
+
+    }; 
+
+    /*
+    * @ drSaxInitSet
+    *
+    */ 
+    drSaxInitSet = new DrSaxInitSet();
+    drSaxInitSet.init();
+
+    /*
+    * @ variable declare
+    *
+    */
     var drsaxContext,
         drsaxInstance,
         FLOAT = "float",
         is_resume=false,
         root = this,
-        AudioContext = root.AudioContext;
+        AudioContext = root.AudioContext,
+        audioAvaliable;
 
-
-    //Object and AudioContext
+    /*
+    * @ drsax Init
+    *
+    */
     drsax = new AudioContext();
+    drSaxInitSet.audioContextCheck();
 
+
+    /*
+    * @ module exports
+    *
+    */
     if (typeof module !== "undefined" && module.exports) {
         module.exports = DSX;
     } else {
         window.DSX = DSX;
     }
 
-    function initValue(userData, defaultData) {
-        return userData === undefined ? defaultData : userData;
-    }
+    // function userDefaultData(userData, defaultData) {
+    //     return userData === undefined ? defaultData : userData;
+    // }
 
     function DSX() {
-        if (!(this instanceof DSX)) {
-            return new DSX;
-        }
-        nodeConnect(drsax);
+
+        if (!(this instanceof DSX))return new DSX;
+    
         drsaxContext = drsax;
         drsaxInstance = this;
+        drSaxInitSet.nodeConnect(drsax);
     }
 
-    function nodeConnect(sax) {
-        if (sax.__connectified__ === true) return;
+    // function nodeConnect(sax) {
+    //     if (sax.__connectified__ === true) return;
 
-        var gain = sax.createGain(),
-            proto = Object.getPrototypeOf(Object.getPrototypeOf(gain)),
-            oconnectNode = proto.connect;
+    //     var gain = sax.createGain(),
+    //         proto = Object.getPrototypeOf(Object.getPrototypeOf(gain)),
+    //         connectNode = proto.connect;
 
-        proto.connect = nodeArgumentConnect;
-        sax.__connectified__ = true; 
+    //     proto.connect = nodeArgumentConnect;
+    //     sax.__connectified__ = true; 
 
-        function nodeArgumentConnect() {
-            var node = arguments[0];
-            arguments[0] = ConstructorInit.isPrototypeOf? (ConstructorInit.isPrototypeOf(node)? node.input : node) : (node.input || node);
-            oconnectNode.apply(this, arguments);
-            return node;
-        }
-    }
+    //     function nodeArgumentConnect() {
+    //         var node = arguments[0];
+    //         arguments[0] = ConstructorInit.isPrototypeOf? (ConstructorInit.isPrototypeOf(node)? node.input : node) : (node.input || node);
+    //         connectNode.apply(this, arguments);
+    //         return node;
+    //     }
+    // }
+
+    /*
+    * @ ConstructorInit
+    *
+    */
 
     var ConstructorInit = Object.create(null, {
-        activate: {
-            writable: true,
-            value: function(action) {
-                if (action) {
-                    this.input.disconnect();
-                    this.input.connect(this.activateNode);
-                } else {
-                    this.input.disconnect();
-                    this.input.connect(this.output);
-                }
-            }
-        },
+
         connect: {
             value: function(to) {
                 this.output.connect(to);
@@ -115,13 +211,35 @@ const DrSax_revision = "worked_2020_05_18_r1";
                 this._lastBypassValue = data;
             }
         },
+        activate: {
+            writable: true,
+            value: function(action) {
+                if (action) {
+                    this.input.disconnect();
+                    this.input.connect(this.activateNode);
+                } else {
+                    this.input.disconnect();
+                    this.input.connect(this.output);
+                }
+            }
+        },
     }),
+
+
+    /*
+    * @ OscObject
+    *
+    */
     OscObject = Object.create(null, {
         // todo
     });
 
 
-    // osc
+    /*
+    * @ Osc
+    *
+    */
+
     DSX.prototype.Osc = function(properties) {
 
         this.drOsc = drsax.createOscillator();
@@ -169,7 +287,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     });
 
-    // amp
+    /*
+    * @ Amp
+    *
+    */
+
     DSX.prototype.Amp = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -211,9 +333,13 @@ const DrSax_revision = "worked_2020_05_18_r1";
                 this.Amp.gain.value = value;
             }
         }
-   });
+    });
 
-    // atttack release
+    /*
+    * @ atttack release
+    *
+    */
+
     DSX.prototype.ATRS = function() {
 
         this.gain = drsax.createGain();
@@ -242,7 +368,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
 
 
 
-    // FM
+    /*
+    * @ FM
+    *
+    */
+
     DSX.prototype.FM = function(properties) {
 
         this.CAOsc = drsax.createOscillator();
@@ -331,7 +461,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     });
 
-    // Am
+    /*
+    * @ AM
+    *
+    */
+
     DSX.prototype.AM = function(properties) {
 
         this.AMOsc = drsax.createOscillator();
@@ -406,7 +540,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     });
 
-    // Subtract
+
+    /*
+    * @ Subtract
+    *
+    */
+
     DSX.prototype.Subtract = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -484,8 +623,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
     });
 
 
+    /*
+    * @ 5EQ
+    *
+    */
 
-    // 5EQ
     DSX.prototype.EQ = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -631,7 +773,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     });
 
-    // saxComp
+    /*
+    * @ saxComp
+    *
+    */
+
     DSX.prototype.saxComp = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -762,7 +908,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     });
 
-    // stereopanning
+   
+    /*
+    * @ stereoPan
+    *
+    */
+
     DSX.prototype.stereoPan = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -805,7 +956,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     });
 
-    // Delay
+
+    /*
+    * @ Delay
+    *
+    */
+
     DSX.prototype.Delay = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -823,7 +979,7 @@ const DrSax_revision = "worked_2020_05_18_r1";
         this.delay.connect(this.output);
 
         this.delayTime = properties.delayTime || this.defaults.delayTime.value;
-        this.feedback = initValue(properties.feedback, this.defaults.feedback.value);
+        this.feedback = drSaxInitSet.userDefaultData(properties.feedback, this.defaults.feedback.value);
         this.bypass = properties.bypass || false;
     };
     DSX.prototype.Delay.prototype = Object.create(ConstructorInit, {
@@ -869,7 +1025,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     });
 
-    // Reverb
+  
+    /*
+    * @ Reverb
+    *
+    */
+
     DSX.prototype.Reverb = function(properties) {
 
         this.reverb_Gain = drsax.createGain();
@@ -958,6 +1119,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
     //
     // };
 
+    /*
+    * @ Mic
+    *
+    */
+
     DSX.prototype.Mic = function() {
 
         navigator.getUserMedia = (navigator.getUserMedia ||
@@ -991,7 +1157,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
         };
     };
 
-    // Tunner
+    /*
+    * @ Tunner
+    *
+    */
+
     DSX.prototype.Tunner = function(pit,note,callback) {
 
         this.pit = pit;
@@ -1097,7 +1267,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
         };
     };
 
-    // record
+    /*
+    * @ Record
+    *
+    */
+
     DSX.prototype.Record = function(source,out,cfg) {
 
         this.out=out;
@@ -1108,7 +1282,7 @@ const DrSax_revision = "worked_2020_05_18_r1";
             this.context.createJavaScriptNode).call(this.context,
             bufferLen, 2, 2);
         var worker = new Worker('record.js');
-        //var worker = new Worker('https://dron9h.github.io/drsaxCore/js/record.js');
+        //var worker = new Worker('https://drsax.github.io/drsaxCore/js/record.js');
 
         worker.postMessage({
             command: 'init',
@@ -1172,8 +1346,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
     };
 
 
+    /*
+    * @ valueChange
+    *
+    */
 
-    // valueChange
     DSX.prototype.valueChange = function(c, b) {
 
         this.c = c;
@@ -1193,7 +1370,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
         };
     };
 
-    // functionChange
+
+    /*
+    * @ functionChange
+    *
+    */
+
     DSX.prototype.functionChange = function(c,out) {
 
         this.c = c;
@@ -1202,7 +1384,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
         this.dataChange.addEventListener("change", out, false);
     };
 
-    // valueToggle
+    /*
+    * @ valueToggle
+    *
+    */
+
     DSX.prototype.valueToggle = function(c,out) {
         this.c = c;
         this.out = out;
@@ -1211,8 +1397,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
     };
 
 
+    /*
+    * @ freqDomain
+    *
+    */
 
-    // freqDomain
     DSX.prototype.freqDomain = function(out,color) {
 
         this.out = out;
@@ -1244,7 +1433,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     };
 
-    // ampDomain
+    /*
+    * @ ampDomain
+    *
+    */
+
     DSX.prototype.ampDomain = function(out,color,canvasWidth,canvasHeight, callback) {
 
         this.out = out;
@@ -1308,8 +1501,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
     };
 
 
+    /*
+    * @ BGsound
+    *
+    */
 
-    // BGsound
     DSX.prototype.BGsound = function(out) {
 
         this.speed = 1;
@@ -1349,7 +1545,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
 
     };
 
-    // music player
+
+    /*
+    * @ musicPlayer
+    *
+    */
+
     DSX.prototype.musicPlayer = function() {
         window.addEventListener('load', this.load, false);
 
@@ -1369,7 +1570,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
         };
     };
 
-    // BGdata
+  
+    /*
+    * @ BGdata
+    *
+    */
+
     DSX.prototype.BGdata = function(file){
 
         this.file = file;
@@ -1404,8 +1610,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
     };
 
 
+    /*
+    * @ Aux
+    *
+    */
 
-    // Aux
     DSX.prototype.Aux = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -1453,7 +1662,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
 
     });
 
-    // Analyser
+
+    /*
+    * @ Analyser
+    *
+    */
+
     DSX.prototype.Analyser = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -1503,7 +1717,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
     });
 
 
-    // pitchShift
+    /*
+    * @ pitchShift
+    *
+    */
+
     DSX.prototype.pitchShift = function(overlapRatio,pitchRatio) {
 
         this.pitchRatio = pitchRatio;
@@ -1560,7 +1778,12 @@ const DrSax_revision = "worked_2020_05_18_r1";
         };
     };
 
-    // DelayPipe
+
+    /*
+    * @ DelayPipe
+    *
+    */
+
     DSX.prototype.DelayPipe = function(properties) {
         if (!properties) {
             properties = this.getDefaultData();
@@ -1604,6 +1827,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
         }
     });
 
+    /*
+    * @ is_resume 
+    *
+    */
+
     if(!is_resume){
         window.addEventListener("click", function (){
             drsax.resume();
@@ -1616,6 +1844,11 @@ const DrSax_revision = "worked_2020_05_18_r1";
      
     }
 
+    /*
+    * @ destination
+    *
+    */
     DAC = drsax.destination;
+    drSaxInitSet.destinationCheck();
 
 })(window);
