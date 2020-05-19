@@ -18,7 +18,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-const DrSax_revision = "worked_2020_05_19_r1";
+const DrSax_revision = "worked_2020_05_19_r2";
 
 ;(function(window, Constructor, undefined) {
 
@@ -85,15 +85,19 @@ const DrSax_revision = "worked_2020_05_19_r1";
             return userData === undefined ? defaultData : userData;
         },
         nodeConnect: function(sax) {
-            if (sax.__connectified__ === true) return;
-
+        
             var gain = sax.createGain(),
                 proto = Object.getPrototypeOf(Object.getPrototypeOf(gain)),
                 connectNode = proto.connect;
-
-            proto.connect = nodeArgumentConnect;
-            sax.__connectified__ = true; 
-
+       
+            if (!!sax.__connectified__){
+                console.log("sax.__connectified__ is true")
+                return
+            } else {
+                proto.connect = nodeArgumentConnect;
+                sax.__connectified__ = true; 
+            }
+    
             function nodeArgumentConnect() {
                 var node = arguments[0];
                 arguments[0] = ConstructorInit.isPrototypeOf? (ConstructorInit.isPrototypeOf(node)? node.input : node) : (node.input || node);
