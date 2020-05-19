@@ -141,10 +141,6 @@ const DrSax_revision = "worked_2020_05_19_r1";
         window.DSX = DSX;
     }
 
-    // function userDefaultData(userData, defaultData) {
-    //     return userData === undefined ? defaultData : userData;
-    // }
-
     function DSX() {
 
         if (!(this instanceof DSX))return new DSX;
@@ -153,24 +149,6 @@ const DrSax_revision = "worked_2020_05_19_r1";
         drsaxInstance = this;
         drSaxInitSet.nodeConnect(drsax);
     }
-
-    // function nodeConnect(sax) {
-    //     if (sax.__connectified__ === true) return;
-
-    //     var gain = sax.createGain(),
-    //         proto = Object.getPrototypeOf(Object.getPrototypeOf(gain)),
-    //         connectNode = proto.connect;
-
-    //     proto.connect = nodeArgumentConnect;
-    //     sax.__connectified__ = true; 
-
-    //     function nodeArgumentConnect() {
-    //         var node = arguments[0];
-    //         arguments[0] = ConstructorInit.isPrototypeOf? (ConstructorInit.isPrototypeOf(node)? node.input : node) : (node.input || node);
-    //         connectNode.apply(this, arguments);
-    //         return node;
-    //     }
-    // }
 
     /*
     * @ ConstructorInit
