@@ -883,7 +883,7 @@ const DrSax_revision = "worked_2020_05_18_r1";
         var reverbfile;
         var revebRequest = new XMLHttpRequest();
     
-        revebRequest.open('GET', '../import/rvb.wav', true);
+        revebRequest.open('GET', 'https://drsax.github.io/drsaxCore/import/rvb.wav', true);
         revebRequest.responseType = 'arraybuffer';
         revebRequest.send();
 
