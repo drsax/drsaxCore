@@ -23,6 +23,28 @@ const DrSax_revision = "worked_2020_05_19_r3";
 ;(function(window, Constructor, undefined) {
 
 
+    var RequiredDataCheck = function(){
+        requiredDataCheckObj = this;
+    };
+    RequiredDataCheck.prototype = {
+        checkHttpsForMediaStream : function(stringUrl) {
+            var regularExpressionUrl = /(https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+            return regularExpressionUrl.test(stringUrl);
+        },
+        getLocationHref : function () {
+            return document.location.href; 
+        },
+    };
+    (function() {
+        requiredDataCheck = new RequiredDataCheck();
+        if (!requiredDataCheck.checkHttpsForMediaStream(requiredDataCheck.getLocationHref())){
+            console.error(">>>>>> http is not able MediaStream  "+ requiredDataCheck.getLocationHref());
+        } else {
+            console.warn(">>>>>> https is able MediaStream  "+ requiredDataCheck.getLocationHref());
+        }
+
+    })();
+
     /**
      * DrSax.js Initialize
      * @desc : Define Defaluts
