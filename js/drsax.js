@@ -1271,8 +1271,8 @@ const DrSax_revision = "worked_2020_05_19_r3";
         this.node = (this.context.createScriptProcessor ||
             this.context.createJavaScriptNode).call(this.context,
             bufferLen, 2, 2);
-        var worker = new Worker('record.js');
-        //var worker = new Worker('https://drsax.github.io/drsaxCore/js/record.js');
+        //var worker = new Worker('record.js');
+        var worker = new Worker('https://drsax.github.io/drsaxCore/js/record.js');
 
         worker.postMessage({
             command: 'init',
