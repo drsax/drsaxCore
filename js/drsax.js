@@ -18,7 +18,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-const DrSax_revision = "worked_2020_05_19_r3";
+const DrSax_revision = "worked_2020_05_20_r1";
 
 ;(function(window, Constructor, undefined) {
 
@@ -99,7 +99,7 @@ const DrSax_revision = "worked_2020_05_19_r3";
                     throw new Error('DrSax.js '+ obj +' Initialize problems');
 
                 } finally {
-                    console.log("=> DrSax.js?" +DrSax_revision);
+                    console.warn("=> DrSax.js?" +DrSax_revision);
                 }
             }
         },
