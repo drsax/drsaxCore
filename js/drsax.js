@@ -219,16 +219,16 @@ const DrSax_revision = "worked_2020_05_20_r1";
                     return;
                 }
                 this._bypass = data;
-                this.activate(!data);
+                this.worksCode(!data);
                 this._lastBypassValue = data;
             }
         },
-        activate: {
+        worksCode: {
             writable: true,
             value: function(action) {
                 if (action) {
                     this.input.disconnect();
-                    this.input.connect(this.activateNode);
+                    this.input.connect(this.connectCode);
                 } else {
                     this.input.disconnect();
                     this.input.connect(this.output);
@@ -309,12 +309,12 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
 
         this.Amp = drsaxContext.createGain();
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.Amp);
+        this.connectCode.connect(this.Amp);
         this.Amp.connect(this.output);
 
         this.gain = properties.gain || this.defaults.gain.value;
@@ -563,11 +563,11 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
         this.Lowpass = drsax.createBiquadFilter();
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.Lowpass);
+        this.connectCode.connect(this.Lowpass);
         this.Lowpass.connect(this.output);
 
         this.cutoff = properties.cutoff || this.defaults.cutoff.value;
@@ -645,7 +645,7 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
 
         this.high = drsaxContext.createBiquadFilter();
         this.midhigh = drsaxContext.createBiquadFilter();
@@ -654,7 +654,7 @@ const DrSax_revision = "worked_2020_05_20_r1";
         this.low = drsaxContext.createBiquadFilter();
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.high);
+        this.connectCode.connect(this.high);
         this.high.connect(this.midhigh);
         this.midhigh.connect(this.mid);
         this.mid.connect(this.midlow);
@@ -795,12 +795,12 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
 
         this.saxComp = drsaxContext.createDynamicsCompressor();
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.saxComp);
+        this.connectCode.connect(this.saxComp);
         this.saxComp.connect(this.output);
 
         this.threshold = properties.threshold || this.defaults.threshold.value;
@@ -931,11 +931,11 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
         this.stereoPan = drsaxContext.createStereoPanner();
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.stereoPan);
+        this.connectCode.connect(this.stereoPan);
         this.stereoPan.connect(this.output);
 
         this.pan = properties.pan || this.defaults.pan.value;
@@ -979,13 +979,13 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
 
         this.delay = drsaxContext.createDelay();
         this.feedbackNode = drsaxContext.createGain();
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.delay);
+        this.connectCode.connect(this.delay);
         this.delay.connect(this.feedbackNode);
         this.feedbackNode.connect(this.delay);
         this.delay.connect(this.output);
@@ -1632,12 +1632,12 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
 
         this.Aux = drsaxContext.createGain();
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.Aux);
+        this.connectCode.connect(this.Aux);
         this.Aux.connect(this.output);
 
         this.gain = properties.gain || this.defaults.gain.value;
@@ -1685,12 +1685,12 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
 
         this.Analyser = drsaxContext.createAnalyser();
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.Analyser);
+        this.connectCode.connect(this.Analyser);
         this.Analyser.connect(this.output);
 
         this.fftsize = properties.fftsize || this.defaults.fftsize;
@@ -1801,12 +1801,12 @@ const DrSax_revision = "worked_2020_05_20_r1";
             properties = this.getDefaultData();
         }
         this.input = drsaxContext.createGain();
-        this.activateNode = drsaxContext.createGain();
+        this.connectCode = drsaxContext.createGain();
 
         this.Delay = drsax.createDelay(10);
         this.output = drsaxContext.createGain();
 
-        this.activateNode.connect(this.Delay);
+        this.connectCode.connect(this.Delay);
         this.Delay.connect(this.output);
 
         this.delayTime = properties.delayTime|| this.defaults.delayTime.value;
