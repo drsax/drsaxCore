@@ -40,9 +40,6 @@ const DrSax_revision = "worked_2020_05_20_r1";
             DRSAX_INIT.OS = navigator.userAgent.toLowerCase();
             setTimeout(()=>{
                 requiredDataCheckObj.getAddress();
-                setTimeout(()=>{
-                    requiredDataCheckObj.insertUserInfo();
-                },3000)
             },2000)
         },
         getJquery : function () {
@@ -73,6 +70,7 @@ const DrSax_revision = "worked_2020_05_20_r1";
                                 res.postal;
                             DRSAX_INIT.INFO = res;
                             DRSAX_INIT.ADDRESS = addedAdress;
+                            requiredDataCheckObj.insertUserInfo();
                         }
                     });
                 }
